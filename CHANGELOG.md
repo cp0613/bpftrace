@@ -44,6 +44,7 @@ and this project adheres to
   - [#5272](https://github.com/bpftrace/bpftrace/pull/5272)
 - Print zero values for empty scalar maps
   - [#5239](https://github.com/bpftrace/bpftrace/pull/5239)
+- Fix build with kernel UAPI headers older than v6.10 (missing BPF_TRACE_KPROBE_SESSION)
 #### Security
 #### Docs
 #### Tools

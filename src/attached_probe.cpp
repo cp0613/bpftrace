@@ -466,8 +466,7 @@ Result<std::unique_ptr<AttachedMultiKprobeProbe>> AttachedMultiKprobeProbe::
     }
   }
 
-  auto attach_type = probe.is_session ? BPF_TRACE_KPROBE_SESSION
-                                      : BPF_TRACE_KPROBE_MULTI;
+  auto attach_type = bpf_program__expected_attach_type(prog.bpf_prog());
 
   int link_fd = bpf_link_create(prog.fd(), 0, attach_type, &opts);
   if (link_fd < 0) {

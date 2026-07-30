@@ -104,9 +104,17 @@ include_directories(SYSTEM ${LIBCEREAL_INCLUDE_DIRS})
 
 
 include(CheckSymbolExists)
+include(CheckCXXSourceCompiles)
 set(CMAKE_REQUIRED_DEFINITIONS -D_GNU_SOURCE)
 check_symbol_exists(name_to_handle_at "sys/types.h;sys/stat.h;fcntl.h" HAVE_NAME_TO_HANDLE_AT)
 set(CMAKE_REQUIRED_DEFINITIONS)
+
+set(CMAKE_REQUIRED_INCLUDES ${KERNEL_INCLUDE_DIRS})
+check_cxx_source_compiles("
+#include <linux/bpf.h>
+int main() { return BPF_TRACE_KPROBE_SESSION; }
+" HAVE_BPF_TRACE_KPROBE_SESSION)
+set(CMAKE_REQUIRED_INCLUDES)
 
 # Newer libbfd requires zstd so let's find that first
 find_library(LIBZSTD_LIBRARIES
@@ -185,6 +193,10 @@ set(BPFTRACE_FLAGS)
 if(HAVE_NAME_TO_HANDLE_AT)
   set(BPFTRACE_FLAGS "${BPFTRACE_FLAGS}" HAVE_NAME_TO_HANDLE_AT=1)
 endif(HAVE_NAME_TO_HANDLE_AT)
+
+if(HAVE_BPF_TRACE_KPROBE_SESSION)
+  set(BPFTRACE_FLAGS "${BPFTRACE_FLAGS}" HAVE_BPF_TRACE_KPROBE_SESSION)
+endif()
 
 if(HAVE_BFD_DISASM)
   set(BPFTRACE_FLAGS "${BPFTRACE_FLAGS}" HAVE_BFD_DISASM)
